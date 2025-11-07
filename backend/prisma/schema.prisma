@@ -1,15 +1,59 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum TipoUsuario {
+  cliente
+  admin
+}
+
+model Usuario {
+  id            Int      @id @default(autoincrement())
+  nome          String
+  email         String   @unique
+  senha         String
+  tipo          TipoUsuario   @default(cliente)
+  agendamentos  Agendamento[]
+}
+
+model Barbeiro {
+  id               Int          @id @default(autoincrement())
+  nome             String
+  idade            Int?
+  dataContratacao  DateTime
+  especialidades   BarbeiroEspecialidade[]
+  agendamentos     Agendamento[]
+}
+
+model Especialidade {
+  id            Int    @id @default(autoincrement())
+  nome          String @unique
+  barbeiros     BarbeiroEspecialidade[]
+  agendamentos  Agendamento[]
+}
+
+model BarbeiroEspecialidade {
+  barbeiroId       Int
+  especialidadeId  Int
+  barbeiro         Barbeiro       @relation(fields: [barbeiroId], references: [id])
+  especialidade    Especialidade  @relation(fields: [especialidadeId], references: [id])
+  @@id([barbeiroId, especialidadeId])
+}
+
+model Agendamento {
+  id               Int           @id @default(autoincrement())
+  usuarioId        Int
+  barbeiroId       Int
+  especialidadeId  Int
+  data             DateTime
+  status           String        @default("agendado")
+  usuario          Usuario       @relation(fields: [usuarioId], references: [id])
+  barbeiro         Barbeiro      @relation(fields: [barbeiroId], references: [id])
+  especialidade    Especialidade @relation(fields: [especialidadeId], references: [id])
+  criadoEm         DateTime      @default(now())
 }
