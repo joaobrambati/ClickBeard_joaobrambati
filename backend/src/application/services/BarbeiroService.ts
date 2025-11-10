@@ -42,7 +42,6 @@ export class BarbeiroService {
         return { mensagem: "O nome é obrigatório", status: false };
 
       const novo = await this.repository.Criar({
-        id: 0,
         nome: dto.nome,
         idade: dto.idade,
         dataContratacao: dto.dataContratacao,
@@ -54,7 +53,7 @@ export class BarbeiroService {
     }
   }
 
-  async Atualizar(id: number, dto: BarbeiroDto): Promise<Response<boolean>> {
+  async Atualizar(id: number, dto: BarbeiroDto): Promise<Response<Barbeiro>> {
     try {
       const barbeiroExistente = await this.repository.ObterPorId(id);
 
@@ -67,7 +66,7 @@ export class BarbeiroService {
         dataContratacao: dto.dataContratacao ?? barbeiroExistente.dataContratacao,
       });
 
-      return { dados: true, mensagem: "Barbeiro atualizado com sucesso", status: true };
+      return { dados: atualizado, mensagem: "Barbeiro atualizado com sucesso", status: true };
     } catch (error) {
       return { mensagem: (error as Error).message, status: false };
     }
