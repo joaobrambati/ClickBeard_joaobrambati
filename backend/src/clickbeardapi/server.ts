@@ -4,6 +4,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import barbeiroRoutes from "../clickbeardapi/routes/BarbeiroRoutes";
 import usuarioRoutes from "../clickbeardapi/routes/UsuarioRoutes";
+import especialidadeRoutes from "../clickbeardapi/routes/EspecialidadeRoutes";
 
 const app = express();
 app.use(express.json());
@@ -25,5 +26,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/api/barbeiros", barbeiroRoutes)
 app.use("/api/usuarios", usuarioRoutes)
+app.use("/api/especialidades", especialidadeRoutes)
 
 app.listen(4000, () => console.log("Servidor rodando na porta 4000"));
