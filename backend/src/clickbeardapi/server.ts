@@ -2,6 +2,7 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 // @ts-ignore
 import swaggerJsdoc from "swagger-jsdoc";
+import barbeiroRoutes from "../clickbeardapi/routes/BarbeiroRoutes";
 
 const app = express();
 app.use(express.json());
@@ -15,15 +16,12 @@ const options = {
       description: "Documentação da API de agendamento da barbearia"
     }
   },
-  apis: ["./src/clickbeardapi/routes/*.ts"] // caminho dos arquivos com comentários
+  apis: ["./src/clickbeardapi/controllers/*.ts"]
 };
 
 const specs = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
-app.get("/", (req, res) => {
-  res.send("API ClickBeard rodando 🚀");
-});
+app.use("/api/barbeiros", barbeiroRoutes)
 
-const PORT = 4000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+app.listen(4000, () => console.log("Servidor rodando na porta 4000"));
