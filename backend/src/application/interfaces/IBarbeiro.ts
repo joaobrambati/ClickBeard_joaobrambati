@@ -6,6 +6,6 @@ export interface IBarbeiro {
   criar(dto: BarbeiroDto): Promise<Response<Barbeiro>>;
   listar(): Promise<Response<Barbeiro[]>>;
   buscarPorId(id: number): Promise<Response<Barbeiro>>;
-  atualizar(id: number, dto: BarbeiroDto): Promise<Response<boolean>>;
+  atualizar(id: number, dto: BarbeiroDto): Promise<Response<Barbeiro>>;
   deletar(id: number): Promise<Response<boolean>>;
 }
