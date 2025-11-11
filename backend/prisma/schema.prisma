@@ -16,7 +16,6 @@ model Usuario {
   id            Int      @id @default(autoincrement())
   nome          String
   email         String   @unique
-  senha         String
   tipo          TipoUsuario   @default(cliente)
   agendamentos  Agendamento[]
 }
