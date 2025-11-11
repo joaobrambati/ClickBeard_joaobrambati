@@ -45,6 +45,7 @@ export class BarbeiroService {
         nome: dto.nome,
         idade: dto.idade,
         dataContratacao: dto.dataContratacao,
+        especialidadeIds: dto.especialidadeIds,
       });
 
       return { dados: novo, mensagem: "Barbeiro criado com sucesso", status: true };
@@ -64,6 +65,7 @@ export class BarbeiroService {
         nome: dto.nome.trim() ?? barbeiroExistente.nome.trim(),
         idade: dto.idade ?? barbeiroExistente.idade,
         dataContratacao: dto.dataContratacao ?? barbeiroExistente.dataContratacao,
+        especialidadeIds: dto.especialidadeIds
       });
 
       return { dados: atualizado, mensagem: "Barbeiro atualizado com sucesso", status: true };
@@ -86,9 +88,5 @@ export class BarbeiroService {
       return { mensagem: (error as Error).message, status: false };
     }
   }
-
-
-
-
 
 }
