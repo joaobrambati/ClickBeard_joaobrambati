@@ -7,6 +7,7 @@ import usuarioRoutes from "../clickbeardapi/routes/UsuarioRoutes";
 import especialidadeRoutes from "../clickbeardapi/routes/EspecialidadeRoutes";
 import especialidadeBarbeiroRoutes from "../clickbeardapi/routes/BarbeiroEspecialidadeRoutes";
 import agendamentoRoutes from "../clickbeardapi/routes/AgendamentoRoutes";
+import authRoutes from "../clickbeardapi/routes/AuthRoutes";
 
 const app = express();
 app.use(express.json());
@@ -31,5 +32,6 @@ app.use("/api/usuarios", usuarioRoutes)
 app.use("/api/especialidades", especialidadeRoutes)
 app.use("/api/especialidadesBarbeiros", especialidadeBarbeiroRoutes)
 app.use("/api/agendamentos", agendamentoRoutes)
+app.use("/api/auth", authRoutes)
 
 app.listen(4000, () => console.log("Servidor rodando na porta 4000"));
