@@ -90,6 +90,25 @@ export default function Home() {
                   ))}
                 </div>
               </Card>
+
+              <Card className="border-border">
+                <CardHeader>
+                  <CardTitle>Localização</CardTitle>
+                </CardHeader>
+                <div className="p-6 pt-0">
+                  <div className="rounded-lg overflow-hidden shadow-md">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4661.804468945012!2d-40.28890521980699!3d-20.33605658654887!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xb816460cb93609%3A0x665ef507b84b37ff!2sClickativo!5e1!3m2!1spt-BR!2sbr!4v1762991358878!5m2!1spt-BR!2sbr"
+                      width="100%"
+                      height="250"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                  </div>
+                </div>
+              </Card>
             </div>
           </main>
         </div>
