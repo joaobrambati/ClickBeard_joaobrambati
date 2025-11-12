@@ -7,6 +7,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Logo } from "@/components/Logo"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { toast } from "sonner"
+import { ApiResponse } from "@/interfaces/ApiResponse"
+import { Usuario } from "@/interfaces/Usuario"
+import { api, endpoints } from "@/lib/routeApi";
 
 export default function Login() {
   const navigate = useNavigate()
@@ -18,20 +21,36 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
 
-    // Validação simples
     if (!email || !password) {
       toast.error("Preencha todos os campos")
       setLoading(false)
       return
     }
 
-    // Simulação de login (substituir por autenticação real)
-    setTimeout(() => {
-      localStorage.setItem("clickbeard-user", JSON.stringify({ email, name: "Usuário" }))
+    try{
+      const response = await api.post<ApiResponse<{ token: string; usuario: Usuario }>>(
+        endpoints.auth.login, { email, senha: password }
+      )
+
+      const { dados, mensagem, status } = response.data
+
+      if (!status) {
+        toast.error(mensagem || "Erro ao fazer login")
+        setLoading(false)
+        return
+      }
+
+      // Armazena token e usuário no localStorage
+      localStorage.setItem("clickbeard-token", dados.token)
+      localStorage.setItem("clickbeard-user", JSON.stringify(dados.usuario))
+
       toast.success("Login realizado com sucesso!")
       navigate("/dashboard")
+    } catch (error: any) {
+      toast.error(error.response?.data?.mensagem || "Erro ao conectar com o servidor")
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
   return (
