@@ -25,7 +25,8 @@ export class UsuarioRepository {
   } 
 
   async ObterPorEmail(email: string): Promise<Usuario | null> {
-    return await context.usuario.findUnique({ where: { email } });
+    const emailTrim = email.trim().toLowerCase();
+    return await context.usuario.findUnique({ where: { email: emailTrim } });
   }
     
 }
