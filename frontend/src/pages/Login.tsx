@@ -14,14 +14,14 @@ import { api, endpoints } from "@/lib/routeApi";
 export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [senha, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
-    if (!email || !password) {
+    if (!email || !senha) {
       toast.error("Preencha todos os campos")
       setLoading(false)
       return
@@ -29,7 +29,7 @@ export default function Login() {
 
     try{
       const response = await api.post<ApiResponse<{ token: string; usuario: Usuario }>>(
-        endpoints.auth.login, { email, senha: password }
+        endpoints.auth.login, { email, senha }
       )
 
       const { dados, mensagem, status } = response.data
@@ -88,7 +88,7 @@ export default function Login() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
+                value={senha}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
