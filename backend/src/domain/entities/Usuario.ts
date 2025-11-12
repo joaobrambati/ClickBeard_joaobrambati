@@ -5,6 +5,7 @@ export class Usuario {
       public nome: string,
       public email: string,
       public tipo: TipoUsuario,
+      public senha?: string,
       public id?: number
   ) {}
 }
