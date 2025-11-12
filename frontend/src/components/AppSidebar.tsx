@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Calendar, CalendarPlus, LogOut, User } from "lucide-react"
+import { Calendar, CalendarPlus, HomeIcon, LogOut, User } from "lucide-react"
 import { NavLink } from "@/components/NavLink"
 import { useNavigate } from "react-router-dom"
 import {
@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 const menuItems = [
+  { title: "Menu", url: "/home", icon: HomeIcon },
   { title: "Meus Agendamentos", url: "/meus-agendamentos", icon: Calendar },
   { title: "Novo Agendamento", url: "/novo-agendamento", icon: CalendarPlus },
 ]
