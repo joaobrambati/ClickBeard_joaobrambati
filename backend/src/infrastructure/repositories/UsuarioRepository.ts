@@ -23,5 +23,9 @@ export class UsuarioRepository {
   async Deletar(id: number): Promise<void> {
     await context.usuario.delete({ where: { id } });
   } 
+
+  async ObterPorEmail(email: string): Promise<Usuario | null> {
+    return await context.usuario.findUnique({ where: { email } });
+  }
     
 }
