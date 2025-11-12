@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Calendar, CalendarPlus, LogOut, User } from "lucide-react"
 import { NavLink } from "@/components/NavLink"
 import { useNavigate } from "react-router-dom"
@@ -17,6 +18,17 @@ import { Logo } from "@/components/Logo"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const menuItems = [
   { title: "Meus Agendamentos", url: "/meus-agendamentos", icon: Calendar },
@@ -25,10 +37,12 @@ const menuItems = [
 
 export function AppSidebar() {
   const navigate = useNavigate()
-  const user = JSON.parse(localStorage.getItem("clickbeard-user") || '{"name":"Usuário"}')
+  const [open, setOpen] = useState(false)
+  const user = JSON.parse(localStorage.getItem("clickbeard-user") || '{"nome":"Usuário"}')
 
   const handleLogout = () => {
     localStorage.removeItem("clickbeard-user")
+    localStorage.removeItem("clickbeard-token")
     toast.success("Logout realizado com sucesso!")
     navigate("/login")
   }
@@ -75,14 +89,36 @@ export function AppSidebar() {
             <p className="text-xs text-muted-foreground truncate">{user.email}</p>
           </div>
         </div>
-        <Button 
-          variant="outline" 
-          className="w-full justify-start gap-2" 
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4" />
-          Sair
-        </Button>
+
+        <AlertDialog open={open} onOpenChange={setOpen}>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => setOpen(true)}
+            >
+              <LogOut className="h-4 w-4" />
+              Sair
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Deseja realmente sair?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Você precisará fazer login novamente para acessar o sistema.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleLogout}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Sair
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </SidebarFooter>
     </Sidebar>
   )
