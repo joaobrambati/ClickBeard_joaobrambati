@@ -2,6 +2,7 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 // @ts-ignore
 import swaggerJsdoc from "swagger-jsdoc";
+import cors from "cors";
 import barbeiroRoutes from "../clickbeardapi/routes/BarbeiroRoutes";
 import usuarioRoutes from "../clickbeardapi/routes/UsuarioRoutes";
 import especialidadeRoutes from "../clickbeardapi/routes/EspecialidadeRoutes";
@@ -10,6 +11,13 @@ import agendamentoRoutes from "../clickbeardapi/routes/AgendamentoRoutes";
 import authRoutes from "../clickbeardapi/routes/AuthRoutes";
 
 const app = express();
+
+app.use(cors({
+  origin: "http://localhost:8080",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 app.use(express.json());
 
 const options = {
