@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
-import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
 import NovoAgendamento from "./pages/NovoAgendamento";
 import MeusAgendamentos from "./pages/MeusAgendamentos";
 import NotFound from "./pages/NotFound";
@@ -24,7 +24,7 @@ const App = () => (
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/novo-agendamento" element={<NovoAgendamento />} />
             <Route path="/meus-agendamentos" element={<MeusAgendamentos />} />
             <Route path="*" element={<NotFound />} />

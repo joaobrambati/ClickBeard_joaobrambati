@@ -45,7 +45,7 @@ export default function Login() {
       localStorage.setItem("clickbeard-user", JSON.stringify(dados.usuario))
 
       toast.success("Login realizado com sucesso!")
-      navigate("/dashboard")
+      navigate("/home")
     } catch (error: any) {
       toast.error(error.response?.data?.mensagem || "Erro ao conectar com o servidor")
     } finally {

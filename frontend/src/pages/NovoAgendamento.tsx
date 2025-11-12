@@ -162,7 +162,7 @@ export default function NovoAgendamento() {
                       <Button 
                         type="button" 
                         variant="outline" 
-                        onClick={() => navigate("/dashboard")}
+                        onClick={() => navigate("/home")}
                       >
                         Cancelar
                       </Button>

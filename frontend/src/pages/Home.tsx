@@ -7,7 +7,7 @@ import { CalendarPlus, Calendar } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
-export default function Dashboard() {
+export default function Home() {
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function Dashboard() {
           <header className="h-16 border-b border-border flex items-center justify-between px-6">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <h1 className="text-xl font-semibold">ClickBeard - Painel do Cliente</h1>
+              <h1 className="text-xl font-semibold">Painel do Cliente</h1>
             </div>
             <ThemeToggle />
           </header>
