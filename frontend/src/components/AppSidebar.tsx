@@ -62,8 +62,8 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
+                    <NavLink
+                      to={item.url}
                       className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:bg-sidebar-accent"
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                     >
@@ -87,7 +87,9 @@ export function AppSidebar() {
           </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{user.nome}</p>
-            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+            <p className="text-xs text-muted-foreground truncate">
+              {user.email}
+            </p>
           </div>
         </div>
 
@@ -102,18 +104,24 @@ export function AppSidebar() {
               Sair
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+
+          <AlertDialogContent className="max-w-md sm:max-w-lg p-6">
             <AlertDialogHeader>
-              <AlertDialogTitle>Deseja realmente sair?</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogTitle className="text-lg sm:text-xl">
+                Deseja realmente sair?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm sm:text-base">
                 Você precisará fazer login novamente para acessar o sistema.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+
+            <AlertDialogFooter className="mt-4">
+              <AlertDialogCancel className="text-sm px-4 py-2">
+                Cancelar
+              </AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleLogout}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-sm px-4 py-2"
               >
                 Sair
               </AlertDialogAction>
@@ -122,5 +130,5 @@ export function AppSidebar() {
         </AlertDialog>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
