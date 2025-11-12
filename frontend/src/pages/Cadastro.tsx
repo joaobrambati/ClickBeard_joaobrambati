@@ -7,12 +7,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Logo } from "@/components/Logo"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { toast } from "sonner"
+import { api, endpoints } from "@/lib/routeApi";
+import { ApiResponse } from "@/interfaces/ApiResponse"
+import { Usuario } from "@/interfaces/Usuario"
 
 export default function Cadastro() {
   const navigate = useNavigate()
-  const [name, setName] = useState("")
+  const [nome, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [senha, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -20,32 +23,41 @@ export default function Cadastro() {
     e.preventDefault()
     setLoading(true)
 
-    // Validações
-    if (!name || !email || !password || !confirmPassword) {
+    if (!nome || !email || !senha || !confirmPassword) {
       toast.error("Preencha todos os campos")
       setLoading(false)
       return
     }
 
-    if (password !== confirmPassword) {
+    if (senha !== confirmPassword) {
       toast.error("As senhas não coincidem")
       setLoading(false)
       return
     }
 
-    if (password.length < 6) {
+    if (senha.length < 6) {
       toast.error("A senha deve ter no mínimo 6 caracteres")
       setLoading(false)
       return
     }
 
-    // Simulação de cadastro
-    setTimeout(() => {
-      localStorage.setItem("clickbeard-user", JSON.stringify({ email, name }))
-      toast.success("Cadastro realizado com sucesso!")
-      navigate("/dashboard")
+    setLoading(true)
+
+    try{
+      const response = await api.post<ApiResponse<{ token: string, usuario: Usuario }>>(
+        endpoints.auth.register, { nome, email, senha }
+      )
+
+      if (!response.data.status)
+        return toast.error(response.data.mensagem || "Erro ao cadastrar usuário")     
+
+      toast.success("Usuário cadastrado com sucesso!")
+      navigate("/login")
+    } catch (error: any){
+      toast.error(error.response?.data?.mensagem || "Erro ao conectar com o servidor")
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -72,7 +84,7 @@ export default function Cadastro() {
                 id="name"
                 type="text"
                 placeholder="Seu nome"
-                value={name}
+                value={nome}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
@@ -94,7 +106,7 @@ export default function Cadastro() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
+                value={senha}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
