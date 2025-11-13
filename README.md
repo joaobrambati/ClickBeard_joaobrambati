@@ -48,13 +48,13 @@ npm run dev
 
 ----------------------------
 ## Perfil - Admin
-Crie ou altere um usuário no banco com tipo = admin
+Crie ou altere um usuário no banco com `tipo = admin`:
 
-Exemplo:
-id|nome      |email                 |tipo   |senha                                                       |
---+----------+----------------------+-------+------------------------------------------------------------+
- 1|João Vitor|joaobrambati@gmail.com|admin  |$2b$10$Q4CLhk3hM11iO1BwLRcKxu30q0Vxt8TEPPK5zci6.ZzamkSKn6xgy|
- 5|teste     |teste@gmail.com       |cliente|$2b$10$.6.BG2ltNAe0RM151dVAnOsEjA.Tb3KwMWWxAuWTOhBYl6p6YdtBG|
+| id | nome       | email                  | tipo   | senha                                                                                     |
+|----|------------|------------------------|--------|-------------------------------------------------------------------------------------------|
+| 1  | João Vitor | joaobrambati@gmail.com | admin  | $2b$10$Q4CLhk3hM11iO1BwLRcKxu30q0Vxt8TEPPK5zci6.ZzamkSKn6xgy                               |
+| 5  | teste      | teste@gmail.com        | cliente| $2b$10$.6.BG2ltNAe0RM151dVAnOsEjA.Tb3KwMWWxAuWTOhBYl6p6YdtBG                               |
+
 
  ----------------------------
 
