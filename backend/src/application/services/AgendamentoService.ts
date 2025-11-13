@@ -77,16 +77,43 @@ export class AgendamentoService {
     }
   }
 
-  async ObterPorUsuario(usuarioId: number) {
-    return await this.repository.ObterPorUsuario(usuarioId);
+  async ObterPorUsuario(usuarioId: number): Promise<Response<Agendamento[]>> {
+    try {
+      const agendamentos = await this.repository.ObterPorUsuario(usuarioId);
+      
+      if (agendamentos.length === 0)
+        return { mensagem: "Nenhum agendamento encontrado", status: false }; 
+
+      return { dados: agendamentos, mensagem: "Agendamentos listados com sucesso", status: true };
+    } catch (error) {
+      return { mensagem: (error as Error).message, status: false };
+    }
   }
 
-  async ObterDoDiaAtual() {
-    return await this.repository.ObterDoDiaAtual();
+  async ObterDoDiaAtual(): Promise<Response<Agendamento[]>> {
+    try {
+      const agendamentos = await this.repository.ObterDoDiaAtual();
+      
+      if (agendamentos.length === 0)
+        return { mensagem: "Nenhum agendamento encontrado", status: false }; 
+
+      return { dados: agendamentos, mensagem: "Agendamentos listados com sucesso", status: true };
+    } catch (error) {
+      return { mensagem: (error as Error).message, status: false };
+    }
   }
 
-  async ObterFuturos() {
-    return await this.repository.ObterFuturos();
+  async ObterFuturos(): Promise<Response<Agendamento[]>> {
+    try {
+      const agendamentos = await this.repository.ObterFuturos();
+      
+      if (agendamentos.length === 0)
+        return { mensagem: "Nenhum agendamento encontrado", status: false }; 
+
+      return { dados: agendamentos, mensagem: "Agendamentos listados com sucesso", status: true };
+    } catch (error) {
+      return { mensagem: (error as Error).message, status: false };
+    }
   }
 
   async ListarHorariosDisponiveis(barbeiroId: number, dataStr: string): Promise<string[]> {
