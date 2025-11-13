@@ -2,6 +2,7 @@
 
 Sistema para gerenciamento de agendamentos de barbeiros, desenvolvido com **React (Vite)** no frontend e **Node.js + Express** no backend, seguindo arquitetura **DDD (Domain, Service, Repository, Controller)**.  
 O banco de dados é executado via Docker.
+Layout da aplicação via Lovable.
 
 ---
 
