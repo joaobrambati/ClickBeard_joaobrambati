@@ -120,4 +120,49 @@ export class AgendamentoController {
     const resultado = await this.service.ObterFuturos();
     return res.json(resultado);
   }
+
+  /**
+   * @swagger
+   * /api/agendamentos/horarios-disponiveis:
+   *   get:
+   *     summary: Lista os horários disponíveis de um barbeiro em um dia específico
+   *     tags: [Agendamentos]
+   *     parameters:
+   *       - in: query
+   *         name: barbeiroId
+   *         schema:
+   *           type: integer
+   *         required: true
+   *         description: ID do barbeiro
+   *       - in: query
+   *         name: data
+   *         schema:
+   *           type: string
+   *           format: date
+   *         required: true
+   *         description: Data para verificação dos horários disponíveis (yyyy-mm-dd)
+   *     responses:
+   *       200:
+   *         description: Lista de horários disponíveis
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 type: string
+   *       400:
+   *         description: barbeiroId e data são obrigatórios
+   */
+  async listarHorariosDisponiveis(req: Request, res: Response) {
+    const barbeiroId = Number(req.query.barbeiroId);
+    const data = String(req.query.data); // yyyy-mm-dd
+
+    if (!barbeiroId || !data) {
+      return res.status(400).json({ mensagem: "barbeiroId e data são obrigatórios." });
+    }
+
+    const horarios = await this.service.ListarHorariosDisponiveis(barbeiroId, data);
+    return res.json(horarios);
+  }
+
 }

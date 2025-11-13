@@ -58,4 +58,20 @@ export class AgendamentoRepository {
       include: { usuario: true, barbeiro: true, especialidade: true }
     });
   }
+
+  async ObterPorBarbeiroNoDia(barbeiroId: number, data: Date): Promise<Agendamento[]> {
+    const inicio = new Date(data);
+    inicio.setHours(0, 0, 0, 0); // começa do dia
+    const fim = new Date(data);
+    fim.setHours(23, 59, 59, 999); // termina no último milissegundo
+
+    return await context.agendamento.findMany({
+      where: {
+        barbeiroId,
+        status: "agendado",
+        data: { gte: inicio, lte: fim }
+      }
+    });
+  }
+  
 }
