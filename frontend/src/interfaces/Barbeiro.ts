@@ -2,5 +2,5 @@ export interface Barbeiro {
   id: number
   nome: string
   idade: number
-  dataContratacao: Date
+  dataContratacao: string
 }

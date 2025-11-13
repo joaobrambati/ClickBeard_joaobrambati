@@ -1,5 +1,6 @@
 import context from "../data/Context";
 import { Agendamento } from "../../domain/entities/Agendamento";
+import { startOfTomorrow } from "date-fns";
 
 export class AgendamentoRepository {
   async Criar(data: any): Promise<Agendamento> {
@@ -52,9 +53,9 @@ export class AgendamentoRepository {
   }
 
   async ObterFuturos(): Promise<Agendamento[]> {
-    const agora = new Date();
+    const amanha = startOfTomorrow();
     return await context.agendamento.findMany({
-      where: { data: { gt: agora } },
+      where: { data: { gt: amanha } },
       include: { usuario: true, barbeiro: true, especialidade: true }
     });
   }

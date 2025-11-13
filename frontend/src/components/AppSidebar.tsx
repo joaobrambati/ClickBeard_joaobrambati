@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Calendar, CalendarPlus, HomeIcon, LogOut, User } from "lucide-react"
+import { Calendar, CalendarPlus, CircleUser, HomeIcon, ListIcon, LogOut, Scissors, User } from "lucide-react"
 import { NavLink } from "@/components/NavLink"
 import { useNavigate } from "react-router-dom"
 import {
@@ -30,10 +30,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+const user = JSON.parse(localStorage.getItem("clickbeard-user") || "{}")
+
 const menuItems = [
   { title: "Menu", url: "/home", icon: HomeIcon },
-  { title: "Meus Agendamentos", url: "/meus-agendamentos", icon: Calendar },
   { title: "Novo Agendamento", url: "/novo-agendamento", icon: CalendarPlus },
+  ...(user.tipo === "cliente" ? [{ title: "Meus Agendamentos", url: "/meus-agendamentos", icon: Calendar }] : []),
+  ...(user.tipo === "admin" ? [{ title: "Meus Agendamentos", url: "/meus-agendamentos-admin", icon: Calendar }] : []),
+  ...(user.tipo === "admin" ? [{ title: "Barbeiros", url: "/barbeiros", icon: Scissors }] : []),
+  ...(user.tipo === "admin" ? [{ title: "Usuarios", url: "/usuarios", icon: CircleUser }] : []),
+  ...(user.tipo === "admin" ? [{ title: "Especialidades", url: "/especialidades", icon: ListIcon }] : [])
 ]
 
 export function AppSidebar() {
