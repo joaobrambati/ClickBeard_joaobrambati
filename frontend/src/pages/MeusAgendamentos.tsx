@@ -10,50 +10,63 @@ import { toast } from "sonner"
 import { Calendar, Clock, User, Scissors, Trash2 } from "lucide-react"
 import { format, differenceInHours, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
-
-interface Agendamento {
-  id: string
-  especialidade: string
-  barbeiro: string
-  data: string
-  horario: string
-  createdAt: string
-}
+import { api, endpoints } from "@/lib/routeApi"
+import { ApiResponse } from "@/interfaces/ApiResponse"
+import { Agendamento } from "@/interfaces/Agendamento"
 
 export default function MeusAgendamentos() {
   const navigate = useNavigate()
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([])
 
   useEffect(() => {
-    const user = localStorage.getItem("clickbeard-user")
+    const user = localStorage.getItem("clickbeard-user");
     if (!user) {
-      navigate("/login")
+      navigate("/login");
+    } else {
+      const userId = JSON.parse(user).id;
+      const fetchAgendamentos = async () => {
+        try {
+          const res = await api.get<ApiResponse<Agendamento[]>>(
+            endpoints.agendamentos.listarUsuario(userId)
+          );
+          if (res.data.status && res.data.dados) {
+            setAgendamentos(res.data.dados);
+          } else {
+            setAgendamentos([]);
+            toast.error(res.data.mensagem);
+          }
+        } catch (error) {
+          toast.error("Erro ao carregar agendamentos");
+        }
+      };
+      fetchAgendamentos();
     }
-    loadAgendamentos()
   }, [navigate])
 
-  const loadAgendamentos = () => {
-    const stored = JSON.parse(localStorage.getItem("clickbeard-agendamentos") || "[]")
-    setAgendamentos(stored)
-  }
+  const handleCancelar = async (id?: number, data?: string) => {
+    if (!id || !data) return;
 
-  const handleCancelar = (id: string, data: string, horario: string) => {
-    const [hours, minutes] = horario.split(":").map(Number)
-    const agendamentoDate = parseISO(data)
-    agendamentoDate.setHours(hours, minutes)
-
-    const hoursUntil = differenceInHours(agendamentoDate, new Date())
+    const agendamentoDate = parseISO(data);
+    const hoursUntil = differenceInHours(agendamentoDate, new Date());
 
     if (hoursUntil < 2) {
-      toast.error("Não é possível cancelar com menos de 2 horas de antecedência")
-      return
+      toast.error("Não é possível cancelar com menos de 2 horas de antecedência");
+      return;
     }
 
-    const updated = agendamentos.filter((ag) => ag.id !== id)
-    localStorage.setItem("clickbeard-agendamentos", JSON.stringify(updated))
-    setAgendamentos(updated)
-    toast.success("Agendamento cancelado com sucesso")
-  }
+    try {
+      const res = await api.put<ApiResponse<any>>(endpoints.agendamentos.cancelar(id));
+
+      if (res.data.status) {
+        setAgendamentos(prev => prev.filter(ag => ag.id !== id));
+        toast.success("Agendamento cancelado com sucesso");
+      } else {
+        toast.error(res.data.mensagem || "Não foi possível cancelar o agendamento");
+      }
+    } catch (error) {
+      toast.error("Erro ao cancelar o agendamento");
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -92,14 +105,14 @@ export default function MeusAgendamentos() {
                           <div>
                             <CardTitle className="flex items-center gap-2">
                               <Scissors className="h-5 w-5 text-primary" />
-                              {agendamento.especialidade}
+                              {agendamento.especialidade?.nome || "Serviço"}
                             </CardTitle>
                             <CardDescription className="mt-1">
-                              Agendado em {format(parseISO(agendamento.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                              Agendado em {format(parseISO(agendamento.criadoEm), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
                             </CardDescription>
                           </div>
                           <Badge variant="secondary" className="bg-primary/10 text-primary">
-                            Confirmado
+                            {agendamento.status}
                           </Badge>
                         </div>
                       </CardHeader>
@@ -111,17 +124,17 @@ export default function MeusAgendamentos() {
                           </div>
                           <div className="flex items-center gap-2 text-sm">
                             <Clock className="h-4 w-4 text-muted-foreground" />
-                            <span>{agendamento.horario}</span>
+                            <span>{agendamento.data ? format(parseISO(agendamento.data), "HH:mm") : "-"}</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm">
                             <User className="h-4 w-4 text-muted-foreground" />
-                            <span>{agendamento.barbeiro}</span>
+                            <span>{agendamento.barbeiro?.nome}</span>
                           </div>
                         </div>
                         <Button
                           variant="destructive"
                           size="sm"
-                          onClick={() => handleCancelar(agendamento.id, agendamento.data, agendamento.horario)}
+                          onClick={() => handleCancelar(agendamento.id, agendamento.data)}
                           className="gap-2"
                         >
                           <Trash2 className="h-4 w-4" />
