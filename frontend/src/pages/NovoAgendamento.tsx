@@ -10,65 +10,107 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner"
 import { Calendar } from "@/components/ui/calendar"
 import { ptBR } from "date-fns/locale"
-
-const especialidades = [
-  "Corte na Tesoura",
-  "Degradê",
-  "Barba",
-  "Sobrancelha",
-  "Bigode",
-  "Platinado",
-]
-
-const barbeiros = [
-  { id: "1", name: "João Silva" },
-  { id: "2", name: "Pedro Santos" },
-  { id: "3", name: "Carlos Oliveira" },
-]
-
-const horarios = [
-  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
-  "11:00", "11:30", "12:00", "12:30", "14:00", "14:30",
-  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
-]
+import { api, endpoints } from "@/lib/routeApi"
+import { ApiResponse } from "@/interfaces/ApiResponse"
+import { Especialidade } from "@/interfaces/Especialidade"
+import { Barbeiro } from "@/interfaces/Barbeiro"
 
 export default function NovoAgendamento() {
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+
   const [especialidade, setEspecialidade] = useState("")
   const [barbeiro, setBarbeiro] = useState("")
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [horario, setHorario] = useState("")
 
+  const [especialidades, setEspecialidades] = useState<{ id: number; nome: string }[]>([])
+  const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([])
+  const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([])
+
   useEffect(() => {
-    const user = localStorage.getItem("clickbeard-user")
-    if (!user) {
-      navigate("/login")
+  const fetchData = async () => {
+    try {
+      const resEsp = await api.get<ApiResponse<Especialidade[]>>(endpoints.especialidades.listar)
+      if (resEsp.data.status && resEsp.data.dados) setEspecialidades(resEsp.data.dados)
+
+      if (especialidade) {
+        const resBarb = await api.get<ApiResponse<{ especialidade: string; barbeiros: Barbeiro[] }>>(
+          endpoints.barbeirosEspecialidade.especialidadeEspecifica(Number(especialidade))
+        )
+        if (resBarb.data.status && resBarb.data.dados) {
+          setBarbeiros(resBarb.data.dados.barbeiros)
+        } else {
+          setBarbeiros([])
+        }
+      } else {
+        setBarbeiros([])
+      }
+    } catch (error) {
+      toast.error("Erro ao carregar dados do servidor")
     }
-  }, [navigate])
+  }
+  fetchData()
+}, [especialidade])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
 
-    if (!especialidade || !barbeiro || !date || !horario) {
-      toast.error("Preencha todos os campos")
+  useEffect(() => {
+  const fetchHorarios = async () => {
+    if (!barbeiro || !date) {
+      setHorariosDisponiveis([])
+      setHorario("")
       return
     }
 
-    const agendamentos = JSON.parse(localStorage.getItem("clickbeard-agendamentos") || "[]")
-    const novoAgendamento = {
-      id: Date.now().toString(),
-      especialidade,
-      barbeiro,
-      data: date.toISOString(),
-      horario,
-      createdAt: new Date().toISOString(),
+    setHorario("")
+
+    try {
+      const dataStr = date.toISOString().split("T")[0] // yyyy-mm-dd
+      const res = await api.get<string[]>(
+        endpoints.agendamentos.horariosDisponiveis(Number(barbeiro), dataStr)
+      )
+      setHorariosDisponiveis(res.data)
+    } catch (error) {
+      toast.error("Erro ao carregar horários disponíveis")
+      setHorariosDisponiveis([])
+    }
+  }
+
+  fetchHorarios()
+}, [barbeiro, date])
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    if (!especialidade || !barbeiro || !date || !horario) {
+      toast.error("Preencha todos os campos")
+      setLoading(false)
+      return
     }
 
-    agendamentos.push(novoAgendamento)
-    localStorage.setItem("clickbeard-agendamentos", JSON.stringify(agendamentos))
+    try {
+      const body = {
+        usuarioId: Number(JSON.parse(localStorage.getItem("clickbeard-user") || "{}").id),
+        barbeiroId: Number(barbeiro),
+        especialidadeId: Number(especialidade),
+        data: new Date(`${date.toISOString().split("T")[0]}T${horario}:00`).toISOString()
+      }
 
-    toast.success("Agendamento realizado com sucesso!")
-    navigate("/meus-agendamentos")
+      const res = await api.post<ApiResponse<any>>(endpoints.agendamentos.criar, body)
+
+      if (res.data.status) {
+        toast.success("Agendamento realizado com sucesso!")
+        navigate("/meus-agendamentos")
+      } else {
+        toast.error(res.data.mensagem)
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.mensagem || "Erro ao criar agendamento")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -97,14 +139,17 @@ export default function NovoAgendamento() {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="especialidade">Especialidade</Label>
-                      <Select value={especialidade} onValueChange={setEspecialidade}>
+                      <Select
+                        value={especialidade}
+                        onValueChange={setEspecialidade}
+                      >
                         <SelectTrigger id="especialidade">
                           <SelectValue placeholder="Selecione um serviço" />
                         </SelectTrigger>
                         <SelectContent>
                           {especialidades.map((esp) => (
-                            <SelectItem key={esp} value={esp}>
-                              {esp}
+                            <SelectItem key={esp.id} value={esp.id.toString()}>
+                              {esp.nome}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -118,9 +163,9 @@ export default function NovoAgendamento() {
                           <SelectValue placeholder="Selecione um barbeiro" />
                         </SelectTrigger>
                         <SelectContent>
-                          {barbeiros.map((barb) => (
-                            <SelectItem key={barb.id} value={barb.name}>
-                              {barb.name}
+                          {barbeiros.map((b) => (
+                            <SelectItem key={b.id} value={b.id.toString()}>
+                              {b.nome}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -135,20 +180,30 @@ export default function NovoAgendamento() {
                         onSelect={setDate}
                         locale={ptBR}
                         className="rounded-md border border-border w-fit"
-                        disabled={(date) => date < new Date()}
+                        disabled={(d) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          const dateToCheck = new Date(d);
+                          dateToCheck.setHours(0, 0, 0, 0);
+                          return dateToCheck < today;
+                        }}
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="horario">Horário</Label>
-                      <Select value={horario} onValueChange={setHorario}>
+                      <Select
+                        value={horario}
+                        onValueChange={setHorario}
+                        disabled={horariosDisponiveis.length === 0} // desativa se não tiver horários
+                      >
                         <SelectTrigger id="horario">
                           <SelectValue placeholder="Selecione um horário" />
                         </SelectTrigger>
                         <SelectContent>
-                          {horarios.map((hora) => (
-                            <SelectItem key={hora} value={hora}>
-                              {hora}
+                          {horariosDisponiveis.map((h) => (
+                            <SelectItem key={h} value={h}>
+                              {h}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -159,9 +214,9 @@ export default function NovoAgendamento() {
                       <Button type="submit" className="flex-1">
                         Confirmar Agendamento
                       </Button>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
+                      <Button
+                        type="button"
+                        variant="outline"
                         onClick={() => navigate("/home")}
                       >
                         Cancelar
@@ -175,5 +230,5 @@ export default function NovoAgendamento() {
         </div>
       </div>
     </SidebarProvider>
-  )
+  );
 }
